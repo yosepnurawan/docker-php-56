@@ -1,0 +1,32 @@
+version: "3"
+services:
+    web:
+        container_name: php5_apache_oci8
+        build:
+            context: .
+            dockerfile: Dockerfile
+        ports:
+            - "8081:80"
+        volumes:
+            - $PWD:/var/www/html/
+            # - $YII_PATH:/var/www/html/yii_1.3
+            - ./conf/apache/:/etc/apache2/sites-enabled/
+            # - ./conf/apache/bin/:/etc/apache/bin/
+            - ./conf/php:/usr/local/etc/php/
+            # - ./conf/php:/etc/php/7.0/apache/
+            - ./conf/host/hosts:/etc/hosts
+        environment:
+            - VIRTUAL_HOST=aplikasi1.local, aplikasi2.local
+        restart: always
+        networks:
+            - webnet
+        depends_on:
+            - cache
+    cache:
+        image: memcached:1.5
+        ports:
+            - "11281:11211"
+        networks:
+            - webnet
+networks:
+    webnet:
